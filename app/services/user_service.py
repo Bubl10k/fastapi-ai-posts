@@ -4,7 +4,7 @@ from fastapi import Depends
 from app.db import get_session
 from app.models.user import User
 from app.repositories.user_repository import UserRepository
-from app.shemas.user_schema import UserCreate, UserUpdate
+from app.schemas.user_schema import UserCreate, UserUpdate
 
 
 class UserService:
@@ -20,6 +20,9 @@ class UserService:
 
     async def get_user_by_id(self, user_id: int) -> User:
         return await self.repository.get_one(id=user_id)
+    
+    async def get_user_by_email(self, email: str) -> User:
+        return await self.repository.get_one(email=email)
 
     async def update_user_by_id(self, user_id: int, data: UserUpdate) -> User:
         return await self.repository.update(id=user_id, data=data.model_dump())
