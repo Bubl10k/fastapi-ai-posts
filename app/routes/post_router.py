@@ -1,11 +1,15 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+
+from app.schemas.post_schema import PostCreate, PostOut, PostUpdate
+from app.services.auth_service import AuthService
+from app.dependencies import CurrentUserDependency, PostServiceDependency
 
 
-from app.schemas.post_schema import PostCreate, PostOut
-from app.utils.dependencies import CurrentUserDependency, PostServiceDependency
-
-
-router = APIRouter(prefix="/posts", tags=["posts"])
+router = APIRouter(
+    prefix="/posts",
+    tags=["Posts"],
+    dependencies=[Depends(AuthService.get_current_user)],
+)
 
 
 @router.get("/", response_model=list[PostOut])
@@ -22,9 +26,20 @@ async def get_post_by_id(post_id: int, post_service: PostServiceDependency):
 async def get_user_posts(
     post_service: PostServiceDependency, current_user: CurrentUserDependency
 ):
-    return await post_service.get_user_posts(current_user)
+    return await post_service.get_user_posts(current_user.id)
 
 
 @router.post("/", response_model=PostOut)
-async def create_post(post_create: PostCreate, post_service: PostServiceDependency):
-    return await post_service.create_post(post_create, post_create.user_id)
+async def create_post(
+    post_create: PostCreate,
+    current_user: CurrentUserDependency,
+    post_service: PostServiceDependency,
+):
+    return await post_service.create_post(post_create, current_user.id)
+
+
+@router.put("/{post_id}", response_model=PostOut)
+async def update_post_by_id(
+    post_id: int, post_update: PostUpdate, post_service: PostServiceDependency
+):
+    return await post_service.update_post_by_id(post_id, post_update)

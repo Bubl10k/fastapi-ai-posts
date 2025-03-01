@@ -1,9 +1,14 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from app.schemas.user_schema import UserOut, UserUpdate
-from app.utils.dependencies import UserServiceDependency
+from app.services.auth_service import AuthService
+from app.dependencies import UserServiceDependency
 
-router = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter(
+    prefix="/users",
+    tags=["Users"],
+    dependencies=[Depends(AuthService.get_current_user)],
+)
 
 
 @router.get("/", response_model=list[UserOut])
