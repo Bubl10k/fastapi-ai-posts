@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 from app.enums.posts import PostStatusEnum
-from app.schemas.mixins import TimeStampMixin
+from app.schemas.mixins import TimeStampMixin, UserMixin
 
 
 class PostBase(BaseModel):
@@ -9,12 +9,20 @@ class PostBase(BaseModel):
     content: str
 
 
-class PostOut(PostBase, TimeStampMixin):
+class PostOut(PostBase):
     id: int
     status: PostStatusEnum = PostStatusEnum.PENDING
 
 
-class PostWithComments(PostBase):
+class PostOutDetail(PostOut, TimeStampMixin, UserMixin):
+    pass
+
+
+class PostOutList(PostOut):
+    pass
+
+
+class PostWithComments(PostOutDetail):
     comments: list = []
 
 

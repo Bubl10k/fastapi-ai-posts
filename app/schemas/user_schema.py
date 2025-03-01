@@ -1,5 +1,6 @@
-from datetime import datetime
 from pydantic import BaseModel, EmailStr
+
+from app.schemas.mixins import TimeStampMixin
 
 
 class UserBase(BaseModel):
@@ -15,10 +16,8 @@ class UserUpdate(UserBase):
     pass
 
 
-class UserOut(UserBase):
+class UserOut(UserBase, TimeStampMixin):
     id: int
-    created_at: datetime
-    updated_at: datetime
 
 
 class UserLogin(BaseModel):

@@ -11,7 +11,7 @@ __all__ = ["router"]
 
 router = APIRouter(prefix="/api")
 
+router.include_router(auth_router)
 router.include_router(user_router)
 router.include_router(post_router)
-router.include_router(auth_router)
 router.include_router(comment_router)

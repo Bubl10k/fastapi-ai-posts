@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
-from app.models.base import TimeStampMixin
+from app.enums.comments import CommentStatusEnum
+from app.schemas.mixins import TimeStampMixin, UserMixin
 
 
 class CommentBase(BaseModel):
@@ -11,8 +12,10 @@ class CommentCreate(CommentBase):
     pass
 
 
-class CommentOut(CommentBase, TimeStampMixin):
-    pass
+class CommentOut(CommentBase, TimeStampMixin, UserMixin):
+    id: int
+    status: CommentStatusEnum
+    post_id: int
 
 
 class CommentUpdate(CommentBase):

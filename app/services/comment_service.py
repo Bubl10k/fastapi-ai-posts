@@ -1,6 +1,8 @@
-from fastapi import HTTPException, status
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.database.db import get_session
+from app.enums.comments import CommentStatusEnum
 from app.models.comment import Comment
 from app.repositories.comments_repository import CommentsRepository
 from app.schemas.comment_schema import CommentCreate, CommentUpdate
@@ -29,6 +31,7 @@ class CommentService:
         data = comment_create.model_dump()
         data["user_id"] = user_id
         data["post_id"] = post_id
+        data["status"] = CommentStatusEnum.PENDING
 
         comment = await self.repository.create(data)
 
@@ -54,5 +57,5 @@ class CommentService:
         return comment
 
 
-def get_comment_service(session: AsyncSession) -> CommentService:
+def get_comment_service(session: AsyncSession = Depends(get_session)) -> CommentService:
     return CommentService(session=session, repository=CommentsRepository(session))

@@ -1,0 +1,12 @@
+[project]
+requires-python = ">=3.10"
+
+[tool.mypy]
+disallow_untyped_calls = True
+disallow_untyped_definitions = True
+exclude = "data/.*|\.venv/.*"
+
+
+[tool.flake8]
+max-line-length = 120
+exclude = ".venv,migrations,__pycache__"
