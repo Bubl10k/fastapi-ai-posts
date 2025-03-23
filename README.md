@@ -11,7 +11,7 @@ A FastAPI-based application that provides a platform for managing posts, comment
 ### Step 1: Clone the repository
 
 ```bash
-  git clone https://github.com/Bubl10k/backend-medduzen-internship.git
+  git clone https://github.com/Bubl10k/fastapi-ai-posts.git
   cd fastapi-ai-posts
 ```
 
