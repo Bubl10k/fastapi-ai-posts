@@ -1,5 +1,5 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.db import get_session
 from app.models.user import User
@@ -29,7 +29,14 @@ class UserService:
         return user
 
     async def get_user_by_email(self, email: str) -> User:
-        return await self.repository.get_one(email=email)
+        user = await self.repository.get_one(email=email)
+        
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
+
+        return user
 
     async def update_user_by_id(self, user_id: int, data: UserUpdate) -> User:
         return await self.repository.update(id=user_id, data=data.model_dump())

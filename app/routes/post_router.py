@@ -1,9 +1,18 @@
 from fastapi import APIRouter, Depends, status
 
-from app.schemas.post_schema import PostCreate, PostOutDetail, PostOutList, PostUpdate
+from app.dependencies import (
+    AIServiceDependency,
+    CurrentUserDependency,
+    PostServiceDependency,
+)
+from app.schemas.post_schema import (
+    PostCreate,
+    PostOutDetail,
+    PostOutList,
+    PostUpdate,
+    PostWithComments,
+)
 from app.services.auth_service import AuthService
-from app.dependencies import CurrentUserDependency, PostServiceDependency
-
 
 router = APIRouter(
     prefix="/posts",
@@ -17,7 +26,7 @@ async def get_all_posts(post_service: PostServiceDependency):
     return await post_service.get_all_posts()
 
 
-@router.get("/{post_id}", response_model=PostOutDetail)
+@router.get("/{post_id}", response_model=PostWithComments)
 async def get_post_by_id(post_id: int, post_service: PostServiceDependency):
     return await post_service.get_post_by_id(post_id)
 
@@ -34,8 +43,9 @@ async def create_post(
     post_create: PostCreate,
     current_user: CurrentUserDependency,
     post_service: PostServiceDependency,
+    ai_service: AIServiceDependency,
 ):
-    return await post_service.create_post(post_create, current_user.id)
+    return await post_service.create_post(post_create, current_user.id, ai_service)
 
 
 @router.put("/{post_id}", response_model=PostOutDetail)

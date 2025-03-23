@@ -1,4 +1,5 @@
 from fastapi import Depends, HTTPException, status
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.db import get_session
@@ -33,7 +34,12 @@ class CommentService:
         data["post_id"] = post_id
         data["status"] = CommentStatusEnum.PENDING
 
-        comment = await self.repository.create(data)
+        try:
+            comment = await self.repository.create(data)
+        except IntegrityError:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Post or User not found"
+            )
 
         if not comment:
             raise HTTPException(

@@ -1,4 +1,4 @@
-from sqlalchemy import Enum, String, Integer, ForeignKey, Text
+from sqlalchemy import Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.enums.posts import PostStatusEnum
