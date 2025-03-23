@@ -1,5 +1,5 @@
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimeStampMixin
 
@@ -12,5 +12,6 @@ class User(Base, TimeStampMixin):
     email: Mapped[str] = mapped_column(String(100), nullable=False)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    posts: Mapped[list["Post"]] = relationship("Post", back_populates="user")
-    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="user")
+    posts = relationship("Post", back_populates="user")
+    comments = relationship("Comment", back_populates="user")
+    comment_responses = relationship("CommentResponse", back_populates="user")

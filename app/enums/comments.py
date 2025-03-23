@@ -5,4 +5,3 @@ class CommentStatusEnum(BaseEnum):
     VALID = "valid"
     PENDING = "pending"
     INVALID = "invalid"
-    

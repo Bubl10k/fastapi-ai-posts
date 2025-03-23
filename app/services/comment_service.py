@@ -7,6 +7,7 @@ from app.enums.comments import CommentStatusEnum
 from app.models.comment import Comment
 from app.repositories.comments_repository import CommentsRepository
 from app.schemas.comment_schema import CommentCreate, CommentUpdate
+from app.services.ai_service import AIService, get_ai_service
 
 
 class CommentService:
@@ -27,12 +28,23 @@ class CommentService:
         return posts
 
     async def create_comment(
-        self, comment_create: CommentCreate, user_id: int, post_id: int
+        self,
+        comment_create: CommentCreate,
+        user_id: int,
+        post_id: int,
+        ai_service: AIService = Depends(get_ai_service)
     ):
         data = comment_create.model_dump()
+        response = ai_service.is_content_appropriate(data["content"])
+
+        try:
+            comment_status = CommentStatusEnum(response)
+        except ValueError:
+            comment_status = CommentStatusEnum.PENDING
+
         data["user_id"] = user_id
         data["post_id"] = post_id
-        data["status"] = CommentStatusEnum.PENDING
+        data["status"] = comment_status
 
         try:
             comment = await self.repository.create(data)

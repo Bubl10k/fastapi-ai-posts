@@ -1,4 +1,4 @@
-from sqlalchemy import Enum, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.enums.posts import PostStatusEnum
@@ -11,10 +11,16 @@ class Post(Base, TimeStampMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    status: Mapped[PostStatusEnum] = mapped_column(Enum(PostStatusEnum), nullable=False)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    status: Mapped[PostStatusEnum] = mapped_column(
+        Enum(PostStatusEnum), nullable=False)
+    auto_response: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False)
 
-    comments: Mapped[list["Comment"]] = relationship(
+    user_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("user.id"), nullable=False)
+
+    comments = relationship(
         "Comment", back_populates="post", cascade="all, delete-orphan"
     )
-    user: Mapped["User"] = relationship("User", back_populates="posts", lazy="selectin")
+    user = relationship(
+        "User", back_populates="posts", lazy="selectin")

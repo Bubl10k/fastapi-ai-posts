@@ -25,7 +25,7 @@ class PostService:
         post = await self.repository.get_one(
             preload=[Post.user, Post.comments], id=post_id
         )
-        
+
         if not post:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Post not found"
@@ -40,16 +40,16 @@ class PostService:
         ai_service: AIService = Depends(get_ai_service)
     ):
         data = post_create.model_dump()
-        is_safe = ai_service.is_content_appropriate(data["content"])
-        
-        if not is_safe:
-            data["status"] = PostStatusEnum.BLOCKED
-            data["user_id"] = user_id
-            return await self.repository.create(data)
-        
-        data["status"] = PostStatusEnum.PENDING
+        response = ai_service.is_content_appropriate(data["content"])
+
+        try:
+            post_status = PostStatusEnum(response)
+        except ValueError:
+            post_status = PostStatusEnum.PENDING
+
         data["user_id"] = user_id
-        
+        data["status"] = post_status
+
         return await self.repository.create(data)
 
     async def update_post_by_id(self, post_id: int, post_update: PostUpdate):

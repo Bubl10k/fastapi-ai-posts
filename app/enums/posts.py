@@ -2,6 +2,6 @@ from app.enums.base import BaseEnum
 
 
 class PostStatusEnum(BaseEnum):
-    POSTED = "posted"
+    VALID = "valid"
     PENDING = "pending"
     BLOCKED = "blocked"

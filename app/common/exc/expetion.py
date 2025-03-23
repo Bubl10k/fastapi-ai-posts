@@ -1,9 +1,9 @@
 from fastapi import HTTPException
 
 
-class PostValidationError(HTTPException):
+class ValidationError(HTTPException):
     def __init__(self, message) -> None:
         super().__init__(
             status_code=400,
-            detail=f"Post validation error: {message}",
+            detail=f"Validation error: {message}",
         )

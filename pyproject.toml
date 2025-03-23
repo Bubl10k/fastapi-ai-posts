@@ -2,9 +2,9 @@
 requires-python = ">=3.10"
 
 [tool.mypy]
-disallow_untyped_calls = True
-disallow_untyped_definitions = True
-exclude = "data/.*|\.venv/.*"
+disallow_untyped_calls = true
+disallow_untyped_definitions = true
+exclude = "data/.*|\\.venv/.*"
 
 
 [tool.flake8]

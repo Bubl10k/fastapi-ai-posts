@@ -46,7 +46,7 @@ class AuthService:
             payload, settings.auth.JWT_SECRET_KEY, algorithm=settings.auth.JWT_ALGORITHM
         )
         return token
-    
+
     async def refresh_token(self, refresh_token: str, user_service: UserService) -> LoginResponse:
         try:
             payload = jwt.decode(
@@ -56,18 +56,18 @@ class AuthService:
             )
             user_email: str = payload.get("email")
             token_type: str = payload.get("type")
-            
+
             if user_email is None or token_type != "refresh":
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
                 )
-                
+
             user = await user_service.get_user_by_email(user_email)
             access_token = await self.create_access_token(
                 user_id=user.id, email=user.email
             )
             return LoginResponse(access_token=access_token, refresh_token=refresh_token)
-        
+
         except jwt.ExpiredSignatureError:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
@@ -89,7 +89,8 @@ class AuthService:
                 },
             )
 
-        is_valid = self.verify_password(user_login.password, existing_user.password)
+        is_valid = self.verify_password(
+            user_login.password, existing_user.password)
 
         if not is_valid:
             raise HTTPException(
@@ -173,7 +174,7 @@ class AuthService:
     ) -> UserMe:
         user_email = AuthService.verify_token(token.credentials)
         user = await user_service.get_user_by_email(user_email)
-        
+
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"

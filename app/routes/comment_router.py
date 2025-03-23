@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, status
 
-from app.dependencies import CommentServiceDependency, CurrentUserDependency
+from app.dependencies import (
+    AIServiceDependency,
+    CommentServiceDependency,
+    CurrentUserDependency,
+)
 from app.schemas.comment_schema import CommentCreate, CommentOut
 from app.services.auth_service import AuthService
-
 
 router = APIRouter(
     prefix="/comments",
@@ -23,5 +26,6 @@ async def create_comment(
     post_id: int,
     user: CurrentUserDependency,
     comment_service: CommentServiceDependency,
+    ai_service: AIServiceDependency,
 ):
-    return await comment_service.create_comment(comment_create, user.id, post_id)
+    return await comment_service.create_comment(comment_create, user.id, post_id, ai_service)

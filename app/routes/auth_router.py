@@ -1,9 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.dependencies import AuthServiceDependency, UserServiceDependency
 from app.schemas.user_schema import LoginResponse, UserCreate, UserLogin, UserMe
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
+token_auth_scheme = HTTPBearer()
 
 
 @router.post("/login", response_model=LoginResponse)
@@ -30,5 +32,7 @@ async def refresh_token(
 @router.post("/me", response_model=UserMe)
 async def get_current_user(
     auth_service: AuthServiceDependency,
+    user_service: UserServiceDependency,
+    token: HTTPAuthorizationCredentials = Depends(token_auth_scheme),
 ) -> UserMe:
-    return await auth_service.get_current_user()
+    return await auth_service.get_current_user(token, user_service)
