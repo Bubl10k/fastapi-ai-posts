@@ -24,7 +24,7 @@ async def register_user(user_data: UserCreate, auth_service: AuthServiceDependen
 async def refresh_token(
     refresh_token: str,
     auth_service: AuthServiceDependency,
-    user_service: UserServiceDependency
+    user_service: UserServiceDependency,
 ):
     return await auth_service.refresh_token(refresh_token, user_service)
 

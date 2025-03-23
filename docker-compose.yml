@@ -1,13 +1,30 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db:
     image: postgres:latest
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+    env_file:
+      - .env
     volumes:
       - ./data:/var/lib/postgresql/data
+    networks:
+      - docker-network
+
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - docker-network
+
+networks:
+  docker-network:
+    driver: bridge

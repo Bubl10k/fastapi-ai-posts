@@ -7,12 +7,11 @@ client = genai.Client(api_key=settings.gemini.GEMINI_API_KEY)
 
 
 class AIService:
-
     @staticmethod
     def is_content_appropriate(content: str) -> str:
-        '''
+        """
         Checks if the content is appropriate.
-        '''
+        """
 
         prompt = (
             "Analyze the following text for offensive language, hate speech, threats, or explicit content. "
@@ -34,9 +33,9 @@ class AIService:
 
     @staticmethod
     def create_response_text_to_comment(content: str) -> str:
-        '''
+        """
         Creates a response text to a comment.
-        '''
+        """
 
         prompt = (
             "Generate a response to the following comment. "

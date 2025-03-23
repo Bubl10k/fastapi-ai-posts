@@ -28,4 +28,6 @@ async def create_comment(
     comment_service: CommentServiceDependency,
     ai_service: AIServiceDependency,
 ):
-    return await comment_service.create_comment(comment_create, user.id, post_id, ai_service)
+    return await comment_service.create_comment(
+        comment_create, user.id, post_id, ai_service
+    )

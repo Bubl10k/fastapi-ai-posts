@@ -15,11 +15,10 @@ from app.services.user_service import UserService, get_user_service
 
 UserServiceDependency = Annotated[UserService, Depends(get_user_service)]
 PostServiceDependency = Annotated[PostService, Depends(get_post_service)]
-CommentServiceDependency = Annotated[CommentService, Depends(
-    get_comment_service)]
+CommentServiceDependency = Annotated[CommentService, Depends(get_comment_service)]
 AuthServiceDependency = Annotated[AuthService, Depends(get_auth_service)]
-CurrentUserDependency = Annotated[UserMe,
-                                  Depends(AuthService.get_current_user)]
+CurrentUserDependency = Annotated[UserMe, Depends(AuthService.get_current_user)]
 AIServiceDependency = Annotated[AIService, Depends(AIService)]
-CommentResponseServiceDependency = Annotated[CommentResponseService, Depends(
-    get_comment_response_service)]
+CommentResponseServiceDependency = Annotated[
+    CommentResponseService, Depends(get_comment_response_service)
+]

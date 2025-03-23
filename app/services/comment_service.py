@@ -32,7 +32,7 @@ class CommentService:
         comment_create: CommentCreate,
         user_id: int,
         post_id: int,
-        ai_service: AIService = Depends(get_ai_service)
+        ai_service: AIService = Depends(get_ai_service),
     ):
         data = comment_create.model_dump()
         response = ai_service.is_content_appropriate(data["content"])

@@ -9,13 +9,10 @@ class CommentResponse(Base, TimeStampMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     content: Mapped[str] = mapped_column(String(100), nullable=False)
-    user_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("user.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     comment_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("comment.id"), nullable=False
     )
 
-    comment = relationship(
-        "Comment", back_populates="comment_responses")
-    user = relationship(
-        "User", back_populates="comment_responses")
+    comment = relationship("Comment", back_populates="comment_responses")
+    user = relationship("User", back_populates="comment_responses")

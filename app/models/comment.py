@@ -13,13 +13,9 @@ class Comment(Base, TimeStampMixin):
     status: Mapped[CommentStatusEnum] = mapped_column(
         Enum(CommentStatusEnum), nullable=False
     )
-    post_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("post.id"), nullable=False)
-    user_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("user.id"), nullable=False)
+    post_id: Mapped[int] = mapped_column(Integer, ForeignKey("post.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
 
-    comment_responses = relationship(
-        "CommentResponse", back_populates="comment"
-    )
+    comment_responses = relationship("CommentResponse", back_populates="comment")
     post = relationship("Post", back_populates="comments")
     user = relationship("User", back_populates="comments")

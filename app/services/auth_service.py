@@ -47,7 +47,9 @@ class AuthService:
         )
         return token
 
-    async def refresh_token(self, refresh_token: str, user_service: UserService) -> LoginResponse:
+    async def refresh_token(
+        self, refresh_token: str, user_service: UserService
+    ) -> LoginResponse:
         try:
             payload = jwt.decode(
                 refresh_token,
@@ -89,8 +91,7 @@ class AuthService:
                 },
             )
 
-        is_valid = self.verify_password(
-            user_login.password, existing_user.password)
+        is_valid = self.verify_password(user_login.password, existing_user.password)
 
         if not is_valid:
             raise HTTPException(

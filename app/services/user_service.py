@@ -30,7 +30,7 @@ class UserService:
 
     async def get_user_by_email(self, email: str) -> User:
         user = await self.repository.get_one(email=email)
-        
+
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="User not found"

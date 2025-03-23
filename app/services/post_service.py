@@ -37,7 +37,7 @@ class PostService:
         self,
         post_create: PostCreate,
         user_id: int,
-        ai_service: AIService = Depends(get_ai_service)
+        ai_service: AIService = Depends(get_ai_service),
     ):
         data = post_create.model_dump()
         response = ai_service.is_content_appropriate(data["content"])
