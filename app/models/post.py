@@ -17,6 +17,6 @@ class Post(Base, TimeStampMixin):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
 
     comments = relationship(
-        "Comment", back_populates="post", cascade="all, delete-orphan"
+        "Comment", back_populates="post", cascade="all, delete-orphan", lazy="selectin"
     )
     user = relationship("User", back_populates="posts", lazy="selectin")

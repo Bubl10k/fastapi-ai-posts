@@ -1,6 +1,17 @@
 [project]
 requires-python = ">=3.10"
 
+[tool.ruff]
+line-length = 120
+exclude = [
+    ".venv",
+    "versions",
+    "__pycache__",
+    "data",
+]
+fixable = ["A", "B", "C4", "E", "F", "I", "TID", "UP"]
+lint.select = ["A", "B", "C4", "E", "F", "I", "INP", "TID", "UP", "YTT"]
+
 [tool.mypy]
 disallow_untyped_calls = true
 disallow_untyped_definitions = true

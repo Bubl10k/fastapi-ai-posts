@@ -25,6 +25,10 @@ class UserLogin(BaseModel):
     password: str
 
 
+class UserLogout(BaseModel):
+    email: EmailStr
+
+
 class LoginResponse(BaseModel):
     access_token: str
     refresh_token: str

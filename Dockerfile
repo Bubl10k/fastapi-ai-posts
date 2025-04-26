@@ -4,8 +4,13 @@ WORKDIR /app
 ENV PYTHONPATH .
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libpq-dev libmagic-dev && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends \
+        gcc \
+        libpq-dev \
+        libmagic-dev \
+        build-essential \
+        python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

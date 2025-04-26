@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Response
 
 from app.dependencies import (
     AIServiceDependency,
@@ -31,3 +31,9 @@ async def create_comment(
     return await comment_service.create_comment(
         comment_create, user.id, post_id, ai_service
     )
+
+
+@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_comment(comment_id: int, comment_service: CommentServiceDependency):
+    await comment_service.delete_comment_by_id(comment_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

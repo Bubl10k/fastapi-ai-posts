@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException, status
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.db import get_session
@@ -16,16 +16,17 @@ class CommentService:
         self.repository = repository
 
     async def get_post_comments(self, post_id: int):
-        posts = await self.repository.get_many(
-            post_id=post_id, preload=[Comment.user, Comment.post]
-        )
+        comments = await self.repository.get_many(
+			preload=[Comment.user, Comment.post, Comment.comment_responses],
+			post_id=post_id
+		)
 
-        if not posts:
+        if not comments:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Post not found"
+                status_code=status.HTTP_404_NOT_FOUND, detail="Comments not found"
             )
 
-        return posts
+        return comments
 
     async def create_comment(
         self,
@@ -73,6 +74,14 @@ class CommentService:
             )
 
         return comment
+
+    async def delete_comment_by_id(self, comment_id: int):
+        comment = await self.repository.get_one(id=comment_id)
+        if not comment:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found"
+            )
+        return await self.repository.delete(model_id=comment.id)
 
 
 def get_comment_service(session: AsyncSession = Depends(get_session)) -> CommentService:

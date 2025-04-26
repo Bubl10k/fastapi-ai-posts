@@ -1,9 +1,11 @@
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.database.db import get_session
 from app.enums.posts import PostStatusEnum
+from app.models import Comment
 from app.models.post import Post
 from app.repositories.post_repository import PostRepository
 from app.schemas.post_schema import PostCreate, PostUpdate
@@ -22,8 +24,11 @@ class PostService:
         return await self.repository.get_many(preload=[Post.user], user_id=user_id)
 
     async def get_post_by_id(self, post_id: int):
-        post = await self.repository.get_one(
-            preload=[Post.user, Post.comments], id=post_id
+        post = await self.repository.get_post_with_responses(
+            preload=[
+                selectinload(Post.user),
+                selectinload(Post.comments).selectinload(Comment.comment_responses)
+            ], id=post_id
         )
 
         if not post:

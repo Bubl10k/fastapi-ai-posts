@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException, status
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.db import get_session
@@ -17,10 +17,15 @@ class CommentResponseService:
         comment_response_create: CommentResponseCreate,
         user_id: int,
         comment_id: int,
+        auto_response: bool = False,
     ):
         data = comment_response_create.model_dump()
         data["user_id"] = user_id
         data["comment_id"] = comment_id
+
+        if auto_response:
+            # TODO: create auto response via AI service
+            pass
 
         try:
             return await self.repository.create(data)
@@ -29,6 +34,15 @@ class CommentResponseService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Comment or User not found",
             )
+
+    async def get_comment_responses_for_comment(self, comment_id: int):
+        responses = await self.repository.get_many(comment_id=comment_id)
+        if not responses:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Responses not found"
+            )
+
+        return responses
 
 
 def get_comment_response_service(

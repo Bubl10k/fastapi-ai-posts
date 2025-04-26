@@ -22,7 +22,16 @@ async def create_comment_response(
     comment_id: int,
     user: CurrentUserDependency,
     comment_response_service: CommentResponseServiceDependency,
+        is_auto_response: bool = False,
 ):
     return await comment_response_service.create_comment_response(
-        comment_response_create, user.id, comment_id
+        comment_response_create, user.id, comment_id, is_auto_response
     )
+
+
+@router.get("/", response_model=list[CommentResponseOutDetail])
+async def get_comment_responses_for_comment(
+    comment_id: int,
+    comment_response_service: CommentResponseServiceDependency,
+):
+    return await comment_response_service.get_comment_responses_for_comment(comment_id)

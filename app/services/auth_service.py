@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.common.settings import settings
 from app.database.db import get_session
 from app.repositories.user_repository import UserRepository
-from app.schemas.user_schema import LoginResponse, UserCreate, UserLogin, UserMe
+from app.schemas.user_schema import LoginResponse, UserCreate, UserLogin, UserMe, UserLogout
 from app.services.user_service import UserService, get_user_service
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -21,7 +21,8 @@ class AuthService:
         self.session = session
         self.user_repository = user_repository
 
-    async def create_access_token(self, user_id: int, email: str) -> str:
+    @staticmethod
+    async def create_access_token(user_id: int, email: str) -> str:
         expiration = datetime.now(timezone.utc) + timedelta(hours=1)
         payload = {
             "id": user_id.__str__(),
@@ -34,7 +35,8 @@ class AuthService:
         )
         return token
 
-    async def create_refresh_token(self, user_id: int, email: str) -> str:
+    @staticmethod
+    async def create_refresh_token(user_id: int, email: str) -> str:
         expiration = datetime.now(timezone.utc) + timedelta(days=7)
         payload = {
             "id": user_id.__str__(),
