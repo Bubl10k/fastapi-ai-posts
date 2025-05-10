@@ -14,8 +14,4 @@ class User(Base, TimeStampMixin):
 
     posts = relationship("Post", back_populates="user")
     comments = relationship("Comment", back_populates="user")
-    comment_responses = relationship(
-        "CommentResponse",
-        back_populates="user",
-        lazy="selectin"
-    )
+    comment_responses = relationship("CommentResponse", back_populates="user", lazy="selectin")

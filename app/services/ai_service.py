@@ -1,6 +1,6 @@
 from google import genai
 
-from app.common.exc.expetion import ValidationError
+from app.common.exc.exception import ValidationError
 from app.common.settings import settings
 
 client = genai.Client(api_key=settings.gemini.GEMINI_API_KEY)

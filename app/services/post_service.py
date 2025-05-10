@@ -25,16 +25,12 @@ class PostService:
 
     async def get_post_by_id(self, post_id: int):
         post = await self.repository.get_post_with_responses(
-            preload=[
-                selectinload(Post.user),
-                selectinload(Post.comments).selectinload(Comment.comment_responses)
-            ], id=post_id
+            preload=[selectinload(Post.user), selectinload(Post.comments).selectinload(Comment.comment_responses)],
+            id=post_id,
         )
 
         if not post:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Post not found"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
 
         return post
 
@@ -59,13 +55,12 @@ class PostService:
 
     async def update_post_by_id(self, post_id: int, post_update: PostUpdate):
         try:
-            return await self.repository.update(
-                model_id=post_id, data=post_update.model_dump()
-            )
+            return await self.repository.update(model_id=post_id, data=post_update.model_dump())
         except NoResultFound:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Post not found"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+
+    async def search_posts(self, query: str, search_fields: list[str]):
+        return await self.repository.search_in_field(search_query=query, fields=search_fields, preload=[Post.user])
 
 
 async def get_post_service(session: AsyncSession = Depends(get_session)) -> PostService:

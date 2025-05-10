@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.common.settings import settings
 from app.database.db import get_session
 from app.repositories.user_repository import UserRepository
-from app.schemas.user_schema import LoginResponse, UserCreate, UserLogin, UserMe, UserLogout
+from app.schemas.user_schema import LoginResponse, UserCreate, UserLogin, UserMe
 from app.services.user_service import UserService, get_user_service
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -30,9 +30,7 @@ class AuthService:
             "exp": expiration,
             "type": "access",
         }
-        token = jwt.encode(
-            payload, settings.auth.JWT_SECRET_KEY, algorithm=settings.auth.JWT_ALGORITHM
-        )
+        token = jwt.encode(payload, settings.auth.JWT_SECRET_KEY, algorithm=settings.auth.JWT_ALGORITHM)
         return token
 
     @staticmethod
@@ -44,14 +42,10 @@ class AuthService:
             "exp": expiration,
             "type": "refresh",
         }
-        token = jwt.encode(
-            payload, settings.auth.JWT_SECRET_KEY, algorithm=settings.auth.JWT_ALGORITHM
-        )
+        token = jwt.encode(payload, settings.auth.JWT_SECRET_KEY, algorithm=settings.auth.JWT_ALGORITHM)
         return token
 
-    async def refresh_token(
-        self, refresh_token: str, user_service: UserService
-    ) -> LoginResponse:
+    async def refresh_token(self, refresh_token: str, user_service: UserService) -> LoginResponse:
         try:
             payload = jwt.decode(
                 refresh_token,
@@ -62,14 +56,10 @@ class AuthService:
             token_type: str = payload.get("type")
 
             if user_email is None or token_type != "refresh":
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
-                )
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
             user = await user_service.get_user_by_email(user_email)
-            access_token = await self.create_access_token(
-                user_id=user.id, email=user.email
-            )
+            access_token = await self.create_access_token(user_id=user.id, email=user.email)
             return LoginResponse(access_token=access_token, refresh_token=refresh_token)
 
         except jwt.ExpiredSignatureError:
@@ -78,9 +68,7 @@ class AuthService:
                 detail="Token has expired",
             )
         except jwt.InvalidTokenError:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
-            )
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
     async def login(self, user_login: UserLogin) -> LoginResponse:
         existing_user = await self.user_repository.get_one(email=user_login.email)
@@ -103,12 +91,8 @@ class AuthService:
                 },
             )
 
-        access_token = await self.create_access_token(
-            user_id=existing_user.id, email=existing_user.email
-        )
-        refresh_token = await self.create_refresh_token(
-            user_id=existing_user.id, email=existing_user.email
-        )
+        access_token = await self.create_access_token(user_id=existing_user.id, email=existing_user.email)
+        refresh_token = await self.create_refresh_token(user_id=existing_user.id, email=existing_user.email)
         return LoginResponse(access_token=access_token, refresh_token=refresh_token)
 
     async def register(self, user_create: UserCreate) -> LoginResponse:
@@ -129,12 +113,8 @@ class AuthService:
             ).model_dump()
         )
 
-        access_token = await self.create_access_token(
-            user_id=new_user.id, email=new_user.email
-        )
-        refresh_token = await self.create_refresh_token(
-            user_id=new_user.id, email=new_user.email
-        )
+        access_token = await self.create_access_token(user_id=new_user.id, email=new_user.email)
+        refresh_token = await self.create_refresh_token(user_id=new_user.id, email=new_user.email)
         return LoginResponse(access_token=access_token, refresh_token=refresh_token)
 
     @staticmethod
@@ -156,9 +136,7 @@ class AuthService:
             user_email: str = payload.get("email")
             token_type: str = payload.get("type")
             if user_email is None or token_type != "access":
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
-                )
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
             return user_email
         except jwt.ExpiredSignatureError:
             raise HTTPException(
@@ -166,9 +144,7 @@ class AuthService:
                 detail="Token has expired",
             )
         except jwt.InvalidTokenError:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
-            )
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
     @staticmethod
     async def get_current_user(
@@ -179,9 +155,7 @@ class AuthService:
         user = await user_service.get_user_by_email(user_email)
 
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
-            )
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
         return UserMe(id=user.id, email=user.email)
 

@@ -9,8 +9,12 @@ exclude = [
     "__pycache__",
     "data",
 ]
-fixable = ["A", "B", "C4", "E", "F", "I", "TID", "UP"]
-lint.select = ["A", "B", "C4", "E", "F", "I", "INP", "TID", "UP", "YTT"]
+
+
+[tool.ruff.lint]
+select = ["A", "B", "C4", "E", "F", "I", "INP", "TID", "UP", "YTT"]
+fixable = ["A", "C4", "E", "F", "I", "TID", "UP"]
+ignore = ["B008", "B904"]
 
 [tool.mypy]
 disallow_untyped_calls = true

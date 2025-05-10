@@ -9,9 +9,7 @@ token_auth_scheme = HTTPBearer()
 
 
 @router.post("/login", response_model=LoginResponse)
-async def login_by_email_and_password(
-    user_data: UserLogin, auth_service: AuthServiceDependency
-):
+async def login_by_email_and_password(user_data: UserLogin, auth_service: AuthServiceDependency):
     return await auth_service.login(user_data)
 
 
@@ -29,7 +27,7 @@ async def refresh_token(
     return await auth_service.refresh_token(refresh_token, user_service)
 
 
-@router.post("/me", response_model=UserMe)
+@router.get("/me", response_model=UserMe)
 async def get_current_user(
     auth_service: AuthServiceDependency,
     user_service: UserServiceDependency,

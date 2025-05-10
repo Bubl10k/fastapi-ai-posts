@@ -20,10 +20,20 @@ router = APIRouter(
     dependencies=[Depends(AuthService.get_current_user)],
 )
 
+search_fields = ["title", "content"]
+
 
 @router.get("/", response_model=list[PostOutList])
 async def get_all_posts(post_service: PostServiceDependency):
     return await post_service.get_all_posts()
+
+
+@router.get("/search/{search_query}", response_model=list[PostOutList])
+async def search_posts(
+    search_query: str,
+    post_service: PostServiceDependency,
+):
+    return await post_service.search_posts(query=search_query, search_fields=search_fields)
 
 
 @router.get("/{post_id}", response_model=PostWithComments)
@@ -32,9 +42,7 @@ async def get_post_by_id(post_id: int, post_service: PostServiceDependency):
 
 
 @router.get("/user/{user_id}", response_model=list[PostOutList])
-async def get_user_posts(
-    post_service: PostServiceDependency, current_user: CurrentUserDependency
-):
+async def get_user_posts(post_service: PostServiceDependency, current_user: CurrentUserDependency):
     return await post_service.get_user_posts(current_user.id)
 
 
@@ -49,7 +57,5 @@ async def create_post(
 
 
 @router.put("/{post_id}", response_model=PostOutDetail)
-async def update_post_by_id(
-    post_id: int, post_update: PostUpdate, post_service: PostServiceDependency
-):
+async def update_post_by_id(post_id: int, post_update: PostUpdate, post_service: PostServiceDependency):
     return await post_service.update_post_by_id(post_id, post_update)

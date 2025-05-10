@@ -10,9 +10,7 @@ class Comment(Base, TimeStampMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     content: Mapped[str] = mapped_column(String(100), nullable=False)
-    status: Mapped[CommentStatusEnum] = mapped_column(
-        Enum(CommentStatusEnum), nullable=False
-    )
+    status: Mapped[CommentStatusEnum] = mapped_column(Enum(CommentStatusEnum), nullable=False)
     post_id: Mapped[int] = mapped_column(Integer, ForeignKey("post.id"), nullable=False)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
 

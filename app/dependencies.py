@@ -5,6 +5,7 @@ from fastapi import Depends
 from app.schemas.user_schema import UserMe
 from app.services.ai_service import AIService
 from app.services.auth_service import AuthService, get_auth_service
+from app.services.celery_service import CeleryService
 from app.services.comment_response_service import (
     CommentResponseService,
     get_comment_response_service,
@@ -19,6 +20,5 @@ CommentServiceDependency = Annotated[CommentService, Depends(get_comment_service
 AuthServiceDependency = Annotated[AuthService, Depends(get_auth_service)]
 CurrentUserDependency = Annotated[UserMe, Depends(AuthService.get_current_user)]
 AIServiceDependency = Annotated[AIService, Depends(AIService)]
-CommentResponseServiceDependency = Annotated[
-    CommentResponseService, Depends(get_comment_response_service)
-]
+CommentResponseServiceDependency = Annotated[CommentResponseService, Depends(get_comment_response_service)]
+CeleryServiceDependency = Annotated[CeleryService, Depends(CeleryService)]

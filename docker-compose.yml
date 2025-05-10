@@ -22,6 +22,14 @@ services:
       - .env
     depends_on:
       - db
+      - redis
+    networks:
+      - docker-network
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
     networks:
       - docker-network
 

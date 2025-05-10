@@ -1,6 +1,11 @@
 from fastapi import APIRouter, Depends, status
 
-from app.dependencies import CommentResponseServiceDependency, CurrentUserDependency
+from app.dependencies import (
+    AIServiceDependency,
+    CeleryServiceDependency,
+    CommentResponseServiceDependency,
+    CurrentUserDependency,
+)
 from app.schemas.comment_response_schema import (
     CommentResponseCreate,
     CommentResponseOutDetail,
@@ -14,18 +19,25 @@ router = APIRouter(
 )
 
 
-@router.post(
-    "/", response_model=CommentResponseOutDetail, status_code=status.HTTP_201_CREATED
-)
+@router.post("/", response_model=CommentResponseOutDetail, status_code=status.HTTP_201_CREATED)
 async def create_comment_response(
     comment_response_create: CommentResponseCreate,
     comment_id: int,
     user: CurrentUserDependency,
     comment_response_service: CommentResponseServiceDependency,
-        is_auto_response: bool = False,
+    ai_service: AIServiceDependency,
+    celery_service: CeleryServiceDependency,
+    is_auto_response: bool = False,
+    delay: int = 0,
 ):
     return await comment_response_service.create_comment_response(
-        comment_response_create, user.id, comment_id, is_auto_response
+        comment_response_create=comment_response_create,
+        user_id=user.id,
+        comment_id=comment_id,
+        auto_response=is_auto_response,
+        ai_service=ai_service,
+        celery_service=celery_service,
+        delay=delay,
     )
 
 
