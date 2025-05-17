@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.db import get_session
@@ -39,6 +39,11 @@ class UserService:
 
     async def delete_user_by_id(self, user_id: int) -> User:
         return await self.repository.delete(id=user_id)
+
+    async def upload_user_avatar(self, user_id: int, file: UploadFile) -> User:
+        user = await self.get_user_by_id(user_id)
+
+        return await self.repository.upload_avatar(user, file)
 
 
 async def get_user_service(session: AsyncSession = Depends(get_session)) -> UserService:

@@ -2,6 +2,7 @@ from pydantic.v1 import BaseSettings
 
 from app.common.app import AppSettings
 from app.common.auth import AuthSettings
+from app.common.aws import AwsSettings
 from app.common.celery import CelerySettings
 from app.common.db import DBSettings
 from app.common.gemini import Gemini
@@ -15,6 +16,7 @@ class Settings(BaseSettings):
     gemini: Gemini = Gemini()
     redis: RedisSettings = RedisSettings()
     celery: CelerySettings = CelerySettings()
+    aws: AwsSettings = AwsSettings()
 
 
 settings = Settings()

@@ -11,6 +11,7 @@ from app.services.comment_response_service import (
     get_comment_response_service,
 )
 from app.services.comment_service import CommentService, get_comment_service
+from app.services.post_reaction_service import PostReactionService, get_post_reaction_service
 from app.services.post_service import PostService, get_post_service
 from app.services.user_service import UserService, get_user_service
 
@@ -22,3 +23,4 @@ CurrentUserDependency = Annotated[UserMe, Depends(AuthService.get_current_user)]
 AIServiceDependency = Annotated[AIService, Depends(AIService)]
 CommentResponseServiceDependency = Annotated[CommentResponseService, Depends(get_comment_response_service)]
 CeleryServiceDependency = Annotated[CeleryService, Depends(CeleryService)]
+PostReactionDependency = Annotated[PostReactionService, Depends(get_post_reaction_service)]

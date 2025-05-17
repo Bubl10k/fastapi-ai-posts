@@ -20,6 +20,11 @@ class UserOut(UserBase, TimeStampMixin):
     id: int
 
 
+class UserResponse(UserOut):
+    about: str | None
+    avatar: str | None
+
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
