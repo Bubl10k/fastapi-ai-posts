@@ -18,3 +18,12 @@ async def create_post_reaction(
     post_reaction_service: PostReactionDependency,
 ):
     return await post_reaction_service.create_reaction(post_id, user.id, post_reaction_create)
+
+
+@router.put("/{reaction_id}", response_model=PostReactionResponse)
+async def update_post_reaction(
+    reaction_id: int,
+    reaction_update: PostReactionCreate,
+    post_reaction_service: PostReactionDependency,
+):
+    return await post_reaction_service.update_reaction_by_id(reaction_id, reaction_update)

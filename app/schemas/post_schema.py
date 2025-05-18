@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from app.enums.posts import PostStatusEnum
 from app.schemas.comment_schema import CommentOut
 from app.schemas.mixins import TimeStampMixin
+from app.schemas.post_reaction_schema import PostReactionResponse
 from app.schemas.user_schema import UserOut
 
 
@@ -16,11 +17,15 @@ class PostOut(PostBase):
     status: PostStatusEnum = PostStatusEnum.PENDING
 
 
-class PostOutDetail(PostOut, TimeStampMixin):
+class PostWithReactions(PostOut):
+    reactions: list[PostReactionResponse]
+
+
+class PostOutDetail(PostWithReactions, TimeStampMixin):
     user: UserOut
 
 
-class PostOutList(PostOut):
+class PostOutList(PostWithReactions):
     pass
 
 

@@ -18,14 +18,25 @@ class PostService:
         self.repository = repository
 
     async def get_all_posts(self):
-        return await self.repository.get_many(preload=[Post.user])
+        return await self.repository.get_many(preload=[Post.user, Post.reactions])
 
     async def get_user_posts(self, user_id: int):
-        return await self.repository.get_many(preload=[Post.user], user_id=user_id)
+        return await self.repository.get_posts_with_comments(
+            user_id=user_id,
+            preload=[
+                selectinload(Post.user),
+                selectinload(Post.reactions),
+                selectinload(Post.comments).selectinload(Comment.comment_responses),
+            ],
+        )
 
     async def get_post_by_id(self, post_id: int):
         post = await self.repository.get_post_with_responses(
-            preload=[selectinload(Post.user), selectinload(Post.comments).selectinload(Comment.comment_responses)],
+            preload=[
+                selectinload(Post.user),
+                selectinload(Post.comments).selectinload(Comment.comment_responses),
+                selectinload(Post.reactions),
+            ],
             id=post_id,
         )
 
@@ -60,7 +71,9 @@ class PostService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
 
     async def search_posts(self, query: str, search_fields: list[str]):
-        return await self.repository.search_in_field(search_query=query, fields=search_fields, preload=[Post.user])
+        return await self.repository.search_in_field(
+            search_query=query, fields=search_fields, preload=[Post.user, Post.reactions]
+        )
 
 
 async def get_post_service(session: AsyncSession = Depends(get_session)) -> PostService:

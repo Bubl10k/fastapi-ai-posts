@@ -7,6 +7,7 @@ from app.dependencies import (
 )
 from app.schemas.post_schema import (
     PostCreate,
+    PostOut,
     PostOutDetail,
     PostOutList,
     PostUpdate,
@@ -28,7 +29,7 @@ async def get_all_posts(post_service: PostServiceDependency):
     return await post_service.get_all_posts()
 
 
-@router.get("/search/{search_query}", response_model=list[PostOutList])
+@router.get("/search", response_model=list[PostOutList])
 async def search_posts(
     search_query: str,
     post_service: PostServiceDependency,
@@ -41,12 +42,12 @@ async def get_post_by_id(post_id: int, post_service: PostServiceDependency):
     return await post_service.get_post_by_id(post_id)
 
 
-@router.get("/user/{user_id}", response_model=list[PostOutList])
+@router.get("/user/{user_id}", response_model=list[PostWithComments])
 async def get_user_posts(post_service: PostServiceDependency, current_user: CurrentUserDependency):
     return await post_service.get_user_posts(current_user.id)
 
 
-@router.post("/", response_model=PostOutDetail, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=PostOut, status_code=status.HTTP_201_CREATED)
 async def create_post(
     post_create: PostCreate,
     current_user: CurrentUserDependency,

@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.common.settings import settings
 from app.database.db import get_session
 from app.repositories.user_repository import UserRepository
-from app.schemas.user_schema import LoginResponse, UserCreate, UserLogin, UserMe
+from app.schemas.user_schema import LoginResponse, UserCreate, UserLogin, UserMe, UserResponse
 from app.services.user_service import UserService, get_user_service
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -157,7 +157,11 @@ class AuthService:
         if not user:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
-        return UserMe(id=user.id, email=user.email)
+        user_data = {
+            k: getattr(user, k) for k in ["id", "email", "username", "avatar", "about", "updated_at", "created_at"]
+        }
+
+        return UserResponse(**user_data)
 
 
 def get_auth_service(session: AsyncSession = Depends(get_session)) -> AuthService:

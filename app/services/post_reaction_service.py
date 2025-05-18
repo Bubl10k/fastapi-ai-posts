@@ -20,7 +20,17 @@ class PostReactionService:
         try:
             return await self.repository.create(data)
         except IntegrityError:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post or User not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Post not found or Reaction already exists"
+            )
+
+    async def update_reaction_by_id(self, reaction_id: int, reaction_update: PostReactionCreate):
+        reaction = await self.repository.update(model_id=reaction_id, data=reaction_update.model_dump())
+
+        if not reaction:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Reaction not found")
+
+        return reaction
 
 
 def get_post_reaction_service(session: AsyncSession = Depends(get_session)) -> PostReactionService:

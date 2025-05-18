@@ -5,11 +5,10 @@ from celery import Celery
 from app.common.settings import settings
 from app.schemas.comment_response_schema import CommentResponseCreate
 
-# TODO: optimize this global dict
-ssl_options = {"ssl_cert_reqs": ssl.CERT_NONE}
-
 
 class CeleryService:
+    ssl_options = {"ssl_cert_reqs": ssl.CERT_NONE}
+
     def __init__(self):
         self.celery_app = Celery(
             settings.celery.CELERY_WORKER_NAME,
@@ -19,8 +18,8 @@ class CeleryService:
 
     def setup_celery(self):
         self.celery_app.conf.update(
-            broker_use_ssl=ssl_options,
-            redis_backend_use_ssl=ssl_options,
+            broker_use_ssl=CeleryService.ssl_options,
+            redis_backend_use_ssl=CeleryService.ssl_options,
             task_serializer="json",
             result_serializer="json",
             accept_content=["json"],

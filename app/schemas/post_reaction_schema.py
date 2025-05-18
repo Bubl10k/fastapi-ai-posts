@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import BaseModel
 
 from app.enums.posts import PostReactionEnum
@@ -12,6 +14,6 @@ class PostReactionCreate(PostReactionBase):
 
 
 class PostReactionResponse(PostReactionBase):
-    id: int
+    uuid: UUID
     user_id: int
     post_id: int
