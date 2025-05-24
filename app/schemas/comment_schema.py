@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from app.enums.comments import CommentStatusEnum
 from app.schemas.comment_response_schema import CommentResponseOutDetail
 from app.schemas.mixins import TimeStampMixin
+from app.schemas.user_schema import UserResponse
 
 
 class CommentBase(BaseModel):
@@ -17,7 +18,11 @@ class CommentOut(CommentBase, TimeStampMixin):
     id: int
     status: CommentStatusEnum
     post_id: int
-    comment_responses: list[CommentResponseOutDetail] = []
+    comment_responses: list[CommentResponseOutDetail]
+
+
+class CommentOutWithUser(CommentOut):
+    user: UserResponse
 
 
 class CommentUpdate(CommentBase):

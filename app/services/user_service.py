@@ -35,15 +35,27 @@ class UserService:
         return user
 
     async def update_user_by_id(self, user_id: int, data: UserUpdate) -> User:
-        return await self.repository.update(id=user_id, data=data.model_dump())
+        return await self.repository.update(model_id=user_id, data=data.model_dump())
 
     async def delete_user_by_id(self, user_id: int) -> User:
-        return await self.repository.delete(id=user_id)
+        return await self.repository.delete(model_id=user_id)
 
     async def upload_user_avatar(self, user_id: int, file: UploadFile) -> User:
         user = await self.get_user_by_id(user_id)
 
         return await self.repository.upload_avatar(user, file)
+
+    async def follow_user(self, user_id: int, friend_id: int) -> User:
+        user = await self.get_user_by_id(user_id)
+        friend = await self.get_user_by_id(friend_id)
+
+        if friend in user.friends:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You are already following this user")
+
+        user.friends.append(friend)
+        await self.session.commit()
+        await self.session.refresh(user)
+        return user
 
 
 async def get_user_service(session: AsyncSession = Depends(get_session)) -> UserService:

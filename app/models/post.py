@@ -19,3 +19,4 @@ class Post(Base, TimeStampMixin):
     comments = relationship("Comment", back_populates="post", cascade="all, delete-orphan", lazy="selectin")
     user = relationship("User", back_populates="posts", lazy="selectin")
     reactions = relationship("PostReaction", back_populates="post", cascade="all, delete-orphan")
+    # tags = relationship("Tag", secondary=post_tags, back_populates="posts", lazy="selectin")

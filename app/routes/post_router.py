@@ -12,6 +12,7 @@ from app.schemas.post_schema import (
     PostOutList,
     PostUpdate,
     PostWithComments,
+    PostWithUserComments,
 )
 from app.services.auth_service import AuthService
 
@@ -29,7 +30,7 @@ async def get_all_posts(post_service: PostServiceDependency):
     return await post_service.get_all_posts()
 
 
-@router.get("/search", response_model=list[PostOutList])
+@router.get("/search", response_model=list[PostOut])
 async def search_posts(
     search_query: str,
     post_service: PostServiceDependency,
@@ -37,7 +38,7 @@ async def search_posts(
     return await post_service.search_posts(query=search_query, search_fields=search_fields)
 
 
-@router.get("/{post_id}", response_model=PostWithComments)
+@router.get("/{post_id}", response_model=PostWithUserComments)
 async def get_post_by_id(post_id: int, post_service: PostServiceDependency):
     return await post_service.get_post_by_id(post_id)
 

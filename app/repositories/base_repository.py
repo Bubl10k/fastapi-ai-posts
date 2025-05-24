@@ -4,6 +4,7 @@ from typing import Generic, TypeVar
 from sqlalchemy import delete, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from sqlalchemy.orm.interfaces import LoaderOption
 
 from app.models.base import Base
 
@@ -20,6 +21,16 @@ class BaseRepository(Generic[ModelType]):
             return getattr(self.model, field_name)
         except AttributeError:
             return ValueError(f"Field {field_name} does not exist in {self.model}")
+
+    @staticmethod
+    async def construct_preload(query, preload: list | None):
+        if preload:
+            for relation in preload:
+                if isinstance(relation, LoaderOption):
+                    query = query.options(relation)
+                else:
+                    query = query.options(selectinload(relation))
+        return query
 
     async def create(self, data: dict) -> ModelType:
         row = self.model(**data)
@@ -57,8 +68,12 @@ class BaseRepository(Generic[ModelType]):
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def update(self, model_id: int, data: dict) -> ModelType:
+    async def update(self, model_id: int, data: dict, preload: list | None = None) -> ModelType:
         query = update(self.model).where(self.model.id == model_id).values(**data).returning(self.model)
+
+        if preload:
+            query = await self.construct_preload(query, preload)
+
         result = await self.session.execute(query)
         result.updated_at = datetime.now()
         await self.session.commit()

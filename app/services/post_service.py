@@ -18,7 +18,14 @@ class PostService:
         self.repository = repository
 
     async def get_all_posts(self):
-        return await self.repository.get_many(preload=[Post.user, Post.reactions])
+        return await self.repository.get_posts_with_comments(
+            preload=[
+                selectinload(Post.user),
+                selectinload(Post.reactions),
+                selectinload(Post.comments).selectinload(Comment.user),
+                selectinload(Post.comments).selectinload(Comment.comment_responses),
+            ]
+        )
 
     async def get_user_posts(self, user_id: int):
         return await self.repository.get_posts_with_comments(
@@ -35,6 +42,7 @@ class PostService:
             preload=[
                 selectinload(Post.user),
                 selectinload(Post.comments).selectinload(Comment.comment_responses),
+                selectinload(Post.comments).selectinload(Comment.user),
                 selectinload(Post.reactions),
             ],
             id=post_id,
@@ -66,14 +74,20 @@ class PostService:
 
     async def update_post_by_id(self, post_id: int, post_update: PostUpdate):
         try:
-            return await self.repository.update(model_id=post_id, data=post_update.model_dump())
+            return await self.repository.update(
+                model_id=post_id,
+                data=post_update.model_dump(),
+                preload=[
+                    selectinload(Post.user),
+                    selectinload(Post.comments).selectinload(Comment.comment_responses),
+                    selectinload(Post.reactions),
+                ],
+            )
         except NoResultFound:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
 
     async def search_posts(self, query: str, search_fields: list[str]):
-        return await self.repository.search_in_field(
-            search_query=query, fields=search_fields, preload=[Post.user, Post.reactions]
-        )
+        return await self.repository.search_in_field(search_query=query, fields=search_fields, preload=[Post.user])
 
 
 async def get_post_service(session: AsyncSession = Depends(get_session)) -> PostService:

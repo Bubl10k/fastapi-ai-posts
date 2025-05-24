@@ -21,10 +21,13 @@ class PostRepository(BaseRepository[Post]):
 
     async def get_posts_with_comments(
         self,
-        user_id: int,
+        user_id: int | None = None,
         preload: list | None = None,
     ) -> list[Post]:
-        query = select(self.model).where(Post.user_id == user_id)
+        if user_id is None:
+            query = select(self.model)
+        else:
+            query = select(self.model).where(Post.user_id == user_id)
 
         if preload:
             for option in preload:
